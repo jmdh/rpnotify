@@ -31,6 +31,7 @@ use Log::Log4perl qw(:easy);
 use HTML::Entities;
 
 Readonly my $PLAYLIST_URL => 'http://www2.radioparadise.com/chumby.xml';
+Readonly my $MORE_INFO_URL_BASE => 'http://www.radioparadise.com/content.php?name=songinfo&song_id=';
 Readonly my $SCRIPT_NAME => 'rpnotify';
 Readonly my $SCRIPT_VERSION => '0.1';
 Readonly my $SCRIPT_URL => 'https://github.com/jmdh/rpnotify';
@@ -66,13 +67,16 @@ while (1) {
                     "Radio Paradise: Now Playing ($current_song->{playtime}):",
                     encode_entities($current_song->{title}) . "\n" .
                     encode_entities($current_song->{artist}) . "\n" .
-                    encode_entities($current_song->{album})
+                    encode_entities($current_song->{album}) . "\n" .
+                    encode_entities("<a href=\"" . $MORE_INFO_URL_BASE .
+                    $current_song->{songid} . "\">more info</a>", '&')
                 );
                 $notification->set_timeout($NOTIFY_FOR);
                 INFO "Sending notification about song $current_song->{songid}";
                 INFO "Title: " . $current_song->{title};
                 INFO "Artist: " . $current_song->{artist};
                 INFO "Album: " . $current_song->{album};
+                INFO "Info: " . $MORE_INFO_URL_BASE . $current_song->{songid};
                 $notification->show;
             } else {
                 WARN "Missing expected elements, not notifying";
