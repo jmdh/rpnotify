@@ -29,7 +29,7 @@ modern GNU/Linux desktops will have this).
 
 Run the script:
 
-$ ./rpnotify
+    $ ./rpnotify
 
 Press Ctrl-C to stop it.
 
