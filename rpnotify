@@ -53,20 +53,27 @@ while (1) {
         my $playlist = XMLin(
             $response->content, ForceArray => ['song'], KeyAttr => ['song']);
         my $current_song = $playlist->{song}->[0];
-        if (defined $last_song && $current_song->{songid} == $last_song) {
+        if (defined $last_song && $current_song->{songid} &&
+            $current_song->{songid} == $last_song) {
             WARN "Song hasn't changed, not notifying";
             $wait_until = time + 5;
         } else {
-            my $notification = Gtk2::Notify->new(
-                "Radio Paradise: Now Playing ($current_song->{playtime}):",
-                $current_song->{title} . "\n" .
-                $current_song->{artist} . "\n" .
-                $current_song->{album}
-            );
-            $notification->set_timeout($NOTIFY_FOR);
-            INFO "Sending notification about song $current_song->{songid}";
-            $notification->show;
-            $last_song = $current_song->{songid};
+            if (defined $current_song->{title} &&
+                defined $current_song->{artist} &&
+                defined $current_song->{album}) {
+                my $notification = Gtk2::Notify->new(
+                    "Radio Paradise: Now Playing ($current_song->{playtime}):",
+                    $current_song->{title} . "\n" .
+                    $current_song->{artist} . "\n" .
+                    $current_song->{album}
+                );
+                $notification->set_timeout($NOTIFY_FOR);
+                INFO "Sending notification about song $current_song->{songid}";
+                $notification->show;
+            } else {
+                WARN "Missing expected elements, not notifying";
+            }
+            $last_song = $current_song->{songid} // 0;
             $wait_until = $playlist->{refresh_time};
         }
         unless ($wait_until) {
