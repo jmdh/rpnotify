@@ -57,7 +57,7 @@ while (1) {
         if (defined $last_song && $current_song->{songid} &&
             $current_song->{songid} == $last_song) {
             WARN "Song hasn't changed, not notifying";
-            $wait_until = time + 5;
+            $wait_until = time;
         } else {
             if (defined $current_song->{title} &&
                 defined $current_song->{artist} &&
