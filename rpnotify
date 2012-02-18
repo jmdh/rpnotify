@@ -1,0 +1,84 @@
+#!/usr/bin/perl
+#
+# Copyright (C) 2012 Dominic Hargreaves <dom@earth.li>
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+
+use strict;
+use warnings;
+
+use Gtk2::Notify;
+use LWP::UserAgent;
+use Readonly;
+use XML::Simple qw(:strict);
+use Log::Log4perl qw(:easy);
+
+Readonly my $PLAYLIST_URL => 'http://www2.radioparadise.com/chumby.xml';
+Readonly my $SCRIPT_NAME => 'rpnotify';
+Readonly my $SCRIPT_VERSION => '0.1';
+Readonly my $SCRIPT_URL => 'https://github.com/jmdh/rpnotify';
+Readonly my $DEBUG_ENABLE => 0;
+Readonly my $NOTIFY_FOR => 7000; # milliseconds
+# This seems to need tweaking to avoid getting fetching the playlist
+# before it's been updated
+Readonly my $EXTRA_DELAY => 7;
+
+Log::Log4perl->easy_init($DEBUG_ENABLE ? $DEBUG : $INFO);
+Gtk2::Notify->init($SCRIPT_NAME);
+my $ua = LWP::UserAgent->new;
+$ua->agent("$SCRIPT_NAME $SCRIPT_VERSION <$SCRIPT_URL>");
+
+my $last_song;
+
+while (1) {
+    my $wait_until;
+    my $response = $ua->get($PLAYLIST_URL);
+    if ($response->is_success) {
+        my $playlist = XMLin(
+            $response->content, ForceArray => ['song'], KeyAttr => ['song']);
+        my $current_song = $playlist->{song}->[0];
+        if (defined $last_song && $current_song->{songid} == $last_song) {
+            WARN "Song hasn't changed, not notifying";
+            $wait_until = time + 5;
+        } else {
+            my $notification = Gtk2::Notify->new(
+                "Radio Paradise: Now Playing ($current_song->{playtime}):",
+                $current_song->{title} . "\n" .
+                $current_song->{artist} . "\n" .
+                $current_song->{album}
+            );
+            $notification->set_timeout($NOTIFY_FOR);
+            INFO "Sending notification about song $current_song->{songid}";
+            $notification->show;
+            $last_song = $current_song->{songid};
+            $wait_until = $playlist->{refresh_time};
+        }
+        unless ($wait_until) {
+            WARN "Defaulting to waiting for 5 minutes";
+            $wait_until = time + 300;
+        }
+        my $sleep_for = $wait_until - time + rand(3) + $EXTRA_DELAY;
+        if ($sleep_for < 5) {
+            INFO "Would have slept for less than 5 seconds; overriding";
+            $sleep_for = 5;
+        }
+        INFO "Sleeping for $sleep_for seconds";
+        sleep $sleep_for;
+    }
+}
