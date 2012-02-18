@@ -35,10 +35,10 @@ Readonly my $SCRIPT_NAME => 'rpnotify';
 Readonly my $SCRIPT_VERSION => '0.1';
 Readonly my $SCRIPT_URL => 'https://github.com/jmdh/rpnotify';
 Readonly my $DEBUG_ENABLE => 0;
-Readonly my $NOTIFY_FOR => 7000; # milliseconds
+Readonly my $NOTIFY_FOR => 10000; # milliseconds
 # This seems to need tweaking to avoid getting fetching the playlist
 # before it's been updated
-Readonly my $EXTRA_DELAY => 7;
+Readonly my $EXTRA_DELAY => 7; # seconds
 
 Log::Log4perl->easy_init($DEBUG_ENABLE ? $DEBUG : $INFO);
 Gtk2::Notify->init($SCRIPT_NAME);
