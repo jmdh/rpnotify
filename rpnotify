@@ -38,7 +38,7 @@ Readonly my $DEBUG_ENABLE => 0;
 Readonly my $NOTIFY_FOR => 10000; # milliseconds
 # This seems to need tweaking to avoid getting fetching the playlist
 # before it's been updated
-Readonly my $EXTRA_DELAY => 7; # seconds
+Readonly my $EXTRA_DELAY => 5; # seconds
 
 Log::Log4perl->easy_init($DEBUG_ENABLE ? $DEBUG : $INFO);
 Gtk2::Notify->init($SCRIPT_NAME);
