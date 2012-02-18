@@ -24,6 +24,7 @@ perl modules:
 - Readonly
 - XML::Simple
 - Log::Log4perl
+- HTML::Entities
 
 Make sure you have a libnotify notification daemon running (most
 modern GNU/Linux desktops will have this).

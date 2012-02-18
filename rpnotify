@@ -28,6 +28,7 @@ use LWP::UserAgent;
 use Readonly;
 use XML::Simple qw(:strict);
 use Log::Log4perl qw(:easy);
+use HTML::Entities;
 
 Readonly my $PLAYLIST_URL => 'http://www2.radioparadise.com/chumby.xml';
 Readonly my $SCRIPT_NAME => 'rpnotify';
@@ -63,9 +64,9 @@ while (1) {
                 defined $current_song->{album}) {
                 my $notification = Gtk2::Notify->new(
                     "Radio Paradise: Now Playing ($current_song->{playtime}):",
-                    $current_song->{title} . "\n" .
-                    $current_song->{artist} . "\n" .
-                    $current_song->{album}
+                    encode_entities($current_song->{title}) . "\n" .
+                    encode_entities($current_song->{artist}) . "\n" .
+                    encode_entities($current_song->{album})
                 );
                 $notification->set_timeout($NOTIFY_FOR);
                 INFO "Sending notification about song $current_song->{songid}";
