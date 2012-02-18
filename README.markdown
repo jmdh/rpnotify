@@ -18,6 +18,7 @@ Make sure you have the following installed:
 - a libnotify notification daemon
 
 perl modules:
+
 - Gtk2::Notify
 - LWP::UserAgent
 - Readonly
