@@ -47,7 +47,7 @@ $ua->agent("$SCRIPT_NAME $SCRIPT_VERSION <$SCRIPT_URL>");
 my $last_song;
 
 while (1) {
-    my $wait_until;
+    my ($wait_until, $sleep_for);
     my $response = $ua->get($PLAYLIST_URL);
     if ($response->is_success) {
         my $playlist = XMLin(
@@ -73,12 +73,17 @@ while (1) {
             WARN "Defaulting to waiting for 5 minutes";
             $wait_until = time + 300;
         }
-        my $sleep_for = $wait_until - time + rand(3) + $EXTRA_DELAY;
+        $sleep_for = $wait_until - time + rand(3) + $EXTRA_DELAY;
         if ($sleep_for < 5) {
             INFO "Would have slept for less than 5 seconds; overriding";
             $sleep_for = 5;
         }
         INFO "Sleeping for $sleep_for seconds";
         sleep $sleep_for;
+    } else {
+        WARN "Error fetching playlist: " . $response->status_line;
+        $sleep_for = 60;
     }
+    INFO "Sleeping for $sleep_for seconds";
+    sleep $sleep_for;
 }
