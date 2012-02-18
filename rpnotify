@@ -78,8 +78,6 @@ while (1) {
             INFO "Would have slept for less than 5 seconds; overriding";
             $sleep_for = 5;
         }
-        INFO "Sleeping for $sleep_for seconds";
-        sleep $sleep_for;
     } else {
         WARN "Error fetching playlist: " . $response->status_line;
         $sleep_for = 60;
