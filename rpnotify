@@ -70,6 +70,9 @@ while (1) {
                 );
                 $notification->set_timeout($NOTIFY_FOR);
                 INFO "Sending notification about song $current_song->{songid}";
+                INFO "Title: " . $current_song->{title};
+                INFO "Artist: " . $current_song->{artist};
+                INFO "Album: " . $current_song->{album};
                 $notification->show;
             } else {
                 WARN "Missing expected elements, not notifying";
