@@ -1,19 +1,16 @@
-rpnotify - libnotify song notifications for Radio Paradise
+# rpnotify - libnotify song notifications for Radio Paradise
 
-Description
------------
+## Description
 
 Displays 'Now Playing' song notifications from Radio Paradise. Useful if
 you want to use the Ogg Vorbis or other streams without embedded song
 metadata.
 
-Licence
--------
+## Licence
 
 Permissive: see rpnotify itself for the licence text
 
-Using
------
+## Using
 
 Make sure you have the following installed:
 
@@ -36,8 +33,7 @@ $ ./rpnotify
 
 Press Ctrl-C to stop it.
 
-Credits
--------
+## Credits
 
 My thanks go to:
 
@@ -46,8 +42,7 @@ Radio Paradise, of course, for providing such a great selection of tunes.
 
 Michael Howe, for the idea.
 
-Contact
--------
+## Contact
 
 Feel free to get in touch with the author: Dominic Hargreaves <dom@earth.li>
 with suggestions, bug reports or (preferably!) patches. You could also
