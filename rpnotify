@@ -63,11 +63,14 @@ while (1) {
             if (defined $current_song->{title} &&
                 defined $current_song->{artist} &&
                 defined $current_song->{album}) {
+                my $album = ref $current_song->{album} eq ref {} ?
+                    '(no album)' :
+                    $current_song->{album};
                 my $notification = Gtk2::Notify->new(
                     "Radio Paradise: Now Playing ($current_song->{playtime}):",
                     encode_entities($current_song->{title}) . "\n" .
                     encode_entities($current_song->{artist}) . "\n" .
-                    encode_entities($current_song->{album}) . "\n" .
+                    encode_entities($album) . "\n" .
                     encode_entities("<a href=\"" . $MORE_INFO_URL_BASE .
                     $current_song->{songid} . "\">more info</a>", '&')
                 );
@@ -75,7 +78,7 @@ while (1) {
                 INFO "Sending notification about song $current_song->{songid}";
                 INFO "Title: " . $current_song->{title};
                 INFO "Artist: " . $current_song->{artist};
-                INFO "Album: " . $current_song->{album};
+                INFO "Album: " . $album;
                 INFO "Info: " . $MORE_INFO_URL_BASE . $current_song->{songid};
                 $notification->show;
             } else {
