@@ -82,7 +82,7 @@ while (1) {
                 WARN "Missing expected elements, not notifying";
             }
             $last_song = $current_song->{songid} // 0;
-            $wait_until = $playlist->{refresh_time};
+            $wait_until = $current_song->{refresh_time};
         }
         unless ($wait_until) {
             WARN "Defaulting to waiting for 5 minutes";
